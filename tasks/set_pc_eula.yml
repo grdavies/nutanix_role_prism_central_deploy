@@ -1,0 +1,39 @@
+---
+  - name: Generate basic authorization string for PC
+    set_fact:
+      nutanix_deploy_pc_tmp_auth_string: "admin:{{ nutanix_deploy_pc_new_password }}"
+    no_log: True
+
+  - name: Generate authorization header for PC
+    set_fact:
+      nutanix_deploy_pc_tmp_nutanix_api_auth: "Basic {{ nutanix_deploy_pc_tmp_auth_string | b64encode(encoding='ascii') }}"
+    no_log: True
+
+  - ansible.builtin.fail:
+      msg: "the variables 'nutanix_deploy_pc_default_eula_full_name', 'nutanix_deploy_pc_default_eula_company_name' and 'nutanix_deploy_pc_default_eula_job_title' must be provided to accept the Nutanix EULA."
+    when:
+      - nutanix_deploy_pc_eula_full_name is not defined or nutanix_deploy_pc_eula_full_name == ""
+      - nutanix_deploy_pc_eula_company_name is not defined or nutanix_deploy_pc_eula_company_name == ""
+      - nutanix_deploy_pc_eula_job_title is not defined or nutanix_deploy_pc_eula_job_title == ""
+
+  - name: Accept EULA
+    uri:
+      url: "https://{{ nutanix_deploy_pc_ip_address }}:{{ nutanix_port }}/PrismGateway/services/rest/v1/eulas/accept"
+      method: POST
+      validate_certs: "{{ validate_certs }}"
+      body_format: json
+      body:
+        username: "{{ nutanix_deploy_pc_eula_full_name }}"
+        companyName: "{{ nutanix_deploy_pc_eula_company_name }}"
+        jobTitle: "{{ nutanix_deploy_pc_eula_job_title }}"
+      headers:
+        Authorization: "{{ nutanix_deploy_pc_tmp_nutanix_api_auth }}"
+      status_code: 200
+      return_content: yes
+    register: nutanix_deploy_pc_accept_eula
+    ignore_errors: no
+
+  - ansible.builtin.fail:
+      msg: "the prism central EULA acceptance failed."
+    when:
+      - not nutanix_deploy_pc_accept_eula.json.value

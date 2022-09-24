@@ -1,0 +1,33 @@
+---
+  - name: Find uuid for network "{{ nutanix_prism_deploy_pc_subnet_name }}"
+    block:
+      - name: Get subnets from nutanix.ncp collection
+        ntnx_subnets_info:
+          nutanix_host: "{{ nutanix_host }}"
+          nutanix_username: "{{ nutanix_username }}"
+          nutanix_password: "{{ nutanix_password }}"
+          validate_certs: "{{ validate_certs }}"
+        register: nutanix_prism_current_subnets
+
+      - name: search subnets list for subnet name and return its uuid
+        set_fact:
+          nutanix_prism_deploy_pc_network_uuid: "{{ item.metadata.uuid }}"
+        when: item.status.name == nutanix_prism_deploy_pc_subnet_name
+        with_items: "{{ nutanix_prism_current_subnets.response.entities }}"
+
+  - name: Debug
+    block:
+      - name: Debug nutanix_prism_current_subnets.response
+        debug:
+          var: nutanix_prism_current_subnets.response
+
+      - name: Debug nutanix_prism_deploy_pc_network_uuid
+        debug:
+          var: nutanix_prism_deploy_pc_network_uuid
+    when:
+      - nutanix_debug
+
+  - ansible.builtin.fail:
+      msg: "the subnet '{{ nutanix_prism_deploy_pc_subnet_name }}' was not found. Please check the input variable nutanix_prism_deploy_pc_subnet_name or that the subnet is present on this Nutanix cluster"
+    when:
+      - nutanix_prism_deploy_pc_network_uuid is not defined

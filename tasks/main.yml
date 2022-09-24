@@ -1,0 +1,15 @@
+---
+# tasks file for nutanix_role_prism_central_deploy
+  - import_tasks: check_variables.yml
+
+  - import_tasks: build_pc_config.yml
+
+  - import_tasks: deploy_pc.yml
+
+  - import_tasks: set_pc_password.yml
+    when: nutanix_deploy_pc_new_password is defined
+
+  - import_tasks: set_pc_eula.yml
+    when: nutanix_deploy_pc_default_eula_accept
+
+  - import_tasks: set_pc_pulse.yml

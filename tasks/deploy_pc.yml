@@ -1,0 +1,46 @@
+---
+  - name: Deploy Prism Central
+    block:
+      - name: Deploying Prism Central to Cluster
+        uri:
+          url: "{{ nutanix_api_v3 }}/prism_central"
+          method: POST
+          validate_certs: "{{ validate_certs }}"
+          body_format: json
+          body: "{{ lookup('template','pc-req.j2') | from_yaml | to_json }}"
+          headers:
+            Authorization: "{{ nutanix_api_auth }}"
+          status_code: 202
+          return_content: yes
+        register: nutanix_deploy_pc
+        ignore_errors: no
+
+      - name: Checking Prism Central deployment status
+        uri:
+          url: "{{ nutanix_api_v2 }}/tasks/{{ nutanix_deploy_pc.json.task_uuid }}"
+          method: GET
+          validate_certs: "{{ validate_certs }}"
+          status_code: 200
+          headers:
+            Authorization: "{{ nutanix_api_auth }}"
+        register: nutanix_deploy_pc_task
+        until: nutanix_deploy_pc_task.json.progress_status == 'Succeeded' or nutanix_deploy_pc_task.json.progress_status == 'Failed'
+        retries: "{{ nutanix_deploy_retries }}"
+        delay: "{{ nutanix_deploy_delay }}"
+
+  - name: Debug
+    block:
+      - name: Debug POST body for "{{ nutanix_api_v3 }}/prism_central"
+        debug:
+          msg: "{{lookup('template','pc-req.j2') | from_yaml | to_json}}"
+
+      - name: Debug nutanix_deploy_pc.json
+        debug:
+          var: nutanix_deploy_pc.json
+    when:
+      - nutanix_debug
+
+  - name: Prism Central deployment failed
+    ansible.builtin.fail:
+      msg: "Prism Central deployment failed. {{ nutanix_deploy_pc_task.json.message }}"
+    when: nutanix_deploy_pc_task.json.progress_status == 'Failed'

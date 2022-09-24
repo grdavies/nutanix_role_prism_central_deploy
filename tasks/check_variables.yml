@@ -1,0 +1,37 @@
+---
+  - name:
+    ansible.builtin.fail:
+      msg: "the variable 'nutanix_deploy_pc_container_name' is not defined."
+    when:
+      - nutanix_deploy_pc_container_name is not defined
+
+  - name:
+    ansible.builtin.fail:
+      msg: "the variable 'nutanix_deploy_pc_subnet_name' is not defined."
+    when:
+      - nutanix_deploy_pc_subnet_name is not defined
+
+  - name:
+    ansible.builtin.fail:
+      msg: "the variable 'nutanix_deploy_pc_network_address' is not defined."
+    when:
+      - nutanix_deploy_pc_network_address is not defined
+
+  - name:
+    ansible.builtin.fail:
+      msg: "the variable 'nutanix_deploy_pc_gateway' is not defined."
+    when:
+      - nutanix_deploy_pc_gateway is not defined
+
+  - name:
+    ansible.builtin.fail:
+      msg: "the variable 'nutanix_deploy_pc_ip_address' is not defined."
+    when:
+      - nutanix_deploy_pc_ip_address is not defined
+
+  - name:
+    ansible.builtin.fail:
+      msg: "the variable 'nutanix_deploy_pc_dns_list' is not defined."
+    when:
+      - nutanix_deploy_pc_dns_list is not defined
+      - nutanix_deploy_pc_dns_list | length > 0

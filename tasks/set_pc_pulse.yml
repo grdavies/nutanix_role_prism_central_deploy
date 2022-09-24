@@ -1,0 +1,37 @@
+---
+  - name: Generate basic authorization string for PC
+    set_fact:
+      nutanix_deploy_pc_tmp_auth_string: "admin:{{ nutanix_deploy_pc_new_password }}"
+    no_log: True
+
+  - name: Generate authorization header for PC
+    set_fact:
+      nutanix_deploy_pc_tmp_nutanix_api_auth: "Basic {{ nutanix_deploy_pc_tmp_auth_string | b64encode(encoding='ascii') }}"
+    no_log: True
+
+  - name: Enable Pulse
+    uri:
+      url: "https://{{ nutanix_deploy_pc_ip_address }}:{{ nutanix_port }}/PrismGateway/services/rest/v1/pulse"
+      method: PUT
+      validate_certs: "{{ validate_certs }}"
+      body_format: json
+      body:
+        defaultNutanixEmail: "nos-asups@nutanix.com"
+        emailContactList: []
+        enable: "{{ nutanix_deploy_pc_pulse }}"
+        enableDefaultNutanixEmail: False
+        identificationInfoScrubbingLevel: "AUTO"
+        isPulsePromptNeeded: False
+        nosVersion: null
+        remindLater: False
+      headers:
+        Authorization: "{{ nutanix_deploy_pc_tmp_nutanix_api_auth }}"
+      status_code: 200
+      return_content: yes
+    register: nutanix_deploy_pc_enable_pulse
+    ignore_errors: no
+
+  - ansible.builtin.fail:
+      msg: "ebaling pulse on prism central failed."
+    when:
+      - not nutanix_deploy_pc_enable_pulse.json.enable or nutanix_deploy_pc_enable_pulse.json.isPulsePromptNeeded
