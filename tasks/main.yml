@@ -4,12 +4,36 @@
 
   - import_tasks: build_pc_config.yml
 
-  - import_tasks: deploy_pc.yml
-
-  - import_tasks: set_pc_password.yml
-    when: nutanix_deploy_pc_new_password is defined
-
-  - import_tasks: set_pc_eula.yml
-    when: nutanix_deploy_pc_default_eula_accept
-
-  - import_tasks: set_pc_pulse.yml
+  # - import_tasks: deploy_pc.yml
+  #
+  # - name: Set 'admin' password
+  #   ansible.builtin.import_role:
+  #     name: grdavies.nutanix_role_prism_initial_password
+  #   vars:
+  #     nutanix_prism_pwd_host: "{{ nutanix_deploy_pc_ip_address }}"
+  #     nutanix_debug: False
+  #     nutanix_prism_pwd_username: admin
+  #     nutanix_prism_initial_password: "{{ nutanix_deploy_pc_default_password }}"
+  #     nutanix_prism_new_password: "{{ nutanix_deploy_pc_new_password }}"
+  #   when: nutanix_deploy_pc_new_password is defined
+  #
+  # - name: Accept Prism EULA
+  #   ansible.builtin.import_role:
+  #     name: grdavies.nutanix_role_prism_eula
+  #   vars:
+  #     nutanix_prism_eula_host: "{{ nutanix_deploy_pc_ip_address }}"
+  #     nutanix_prism_eula_username: admin
+  #     nutanix_prism_eula_password: "{{ nutanix_deploy_pc_new_password }}"
+  #     nutanix_prism_eula_eula_accept: "{{ nutanix_deploy_pc_eula_accept }}"
+  #     nutanix_prism_eula_full_name: "{{ nutanix_deploy_pc_eula_full_name }}"
+  #     nutanix_prism_eula_company_name: "{{ nutanix_deploy_pc_eula_company_name }}"
+  #     nutanix_prism_eula_job_title: "{{ nutanix_deploy_pc_eula_job_title }}"
+  #
+  # - name: Enable Pulse
+  #   ansible.builtin.import_role:
+  #     name: grdavies.nutanix_role_prism_pulse
+  #   vars:
+  #     nutanix_pulse_host: "{{ nutanix_deploy_pc_ip_address }}"
+  #     nutanix_pulse_username: admin
+  #     nutanix_pulse_password: "{{ nutanix_deploy_pc_new_password }}"
+  #     nutanix_pulse_status: "{{ nutanix_deploy_pc_pulse }}"

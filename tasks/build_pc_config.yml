@@ -1,43 +1,20 @@
 ---
-  - name: Find uuid for container "{{ nutanix_deploy_pc_container_name }}"
+  - name: Get container UUID
     block:
-      - name: Get containers from Prism API
-        uri:
-          url: "{{ nutanix_api_v2 }}/storage_containers"
-          method: GET
-          validate_certs: "{{ validate_certs }}"
-          body_format: json
-          headers:
-            Authorization: "{{ nutanix_api_auth }}"
-          status_code: 200
-          return_content: yes
-        register: nutanix_current_containers
-        ignore_errors: no
-
-      - name: Search container list for container name and return its uuid
+      - name: Set nutanix_container_found_uuid=None
         set_fact:
-          nutanix_deploy_pc_container_uuid: "{{ item }}"
-        with_items: "{{ nutanix_current_containers.json | to_json | from_json | json_query(query) }}"
+          nutanix_container_found_uuid: "None"
+
+      - name: Search for container "{{ nutanix_deploy_pc_container_name }}" and get its UUID
+        ansible.builtin.import_role:
+          name: grdavies.nutanix_role_prism_container_search
         vars:
-          query: "entities[?name=='{{ nutanix_deploy_pc_container_name }}'].storage_container_uuid"
-        when: nutanix_current_containers.json.metadata.total_entities > 0
+          nutanix_container_search_name: "{{ nutanix_deploy_pc_container_name }}"
 
-  - name: Debug
-    block:
-      - name: Debug nutanix_current_containers.json
-        debug:
-          var: nutanix_current_containers.json
-
-      - name: Debug nutanix_deploy_pc_container_uuid
-        debug:
-          var: nutanix_deploy_pc_container_uuid
-    when:
-      - nutanix_debug
-
-  - ansible.builtin.fail:
-      msg: "the container '{{ nutanix_deploy_pc_container_name }}' was not found. Please check the input variable nutanix_deploy_pc_container_name or that the container is present on this Nutanix cluster"
-    when:
-      - nutanix_deploy_pc_container_uuid is not defined
+      - ansible.builtin.fail:
+          msg: "the container '{{ nutanix_deploy_pc_container_name }}' was not found. Please check the input variable nutanix_deploy_pc_container_name or that the container is present on this Nutanix cluster"
+        when:
+          - nutanix_container_found_uuid is not defined or nutanix_container_found_uuid == "None"
 
   - name: Find uuid for network "{{ nutanix_deploy_pc_subnet_name }}"
     block:

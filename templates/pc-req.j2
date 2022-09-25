@@ -4,7 +4,7 @@ resources:
    should_auto_register: {{ nutanix_deploy_pc_auto_register }}
    pc_vm_list:
    - vm_name: {{ nutanix_deploy_pc_vm_name }}
-     container_uuid:  {{ nutanix_deploy_pc_container_uuid }}
+     container_uuid:  {{ nutanix_container_found_uuid }}
      num_sockets: {{ nutanix_deploy_pc_num_sockets }}
      data_disk_size_bytes: {{ nutanix_deploy_pc_data_disk_size | human_to_bytes }}
      memory_size_bytes: {{ nutanix_deploy_pc_memory_size | human_to_bytes }}

@@ -2,6 +2,21 @@
 
 This Ansible role downloads and deploys Nutanix Prism Central.
 
+## Requirements
+
+The following roles need to be installed as they are used within this role;
+- grdavies.nutanix_role_prism_initial_password
+- grdavies.nutanix_role_prism_eula
+- grdavies.nutanix_role_prism_pulse
+- grdavies.nutanix_role_prism_container_search
+
+```
+ansible-galaxy install grdavies.nutanix_role_prism_init_api --force
+ansible-galaxy install grdavies.nutanix_role_prism_initial_password --force
+ansible-galaxy install grdavies.nutanix_role_prism_eula --force
+ansible-galaxy install grdavies.nutanix_role_prism_pulse --force
+ansible-galaxy install grdavies.nutanix_role_prism_container_search --force
+```
 
 ## Role Variables
 
@@ -27,6 +42,10 @@ This Ansible role downloads and deploys Nutanix Prism Central.
 ## Dependencies
 
 - grdavies.nutanix_role_prism_init_api
+- grdavies.nutanix_role_prism_initial_password
+- grdavies.nutanix_role_prism_eula
+- grdavies.nutanix_role_prism_pulse
+- grdavies.nutanix_role_prism_container_search
 
 
 ## Example Playbook

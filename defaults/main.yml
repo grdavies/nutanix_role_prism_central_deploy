@@ -1,6 +1,7 @@
 ---
 # defaults file for nutanix_role_prism_central_deploy
   validate_certs: no
+  nutanix_debug: False
   nutanix_deploy_pc_default_password: Nutanix/4u
   # nutanix_deploy_pc_new_password:
   nutanix_deploy_pc_pulse: True
@@ -11,9 +12,6 @@
   nutanix_deploy_pc_auto_register: False
   nutanix_deploy_pc_vm_name: prism-central
   nutanix_deploy_pc_size: small
-  # nutanix_deploy_pc_num_sockets: 6
-  # nutanix_deploy_pc_data_disk_size: 500 GB
-  # nutanix_deploy_pc_memory_size: 26 GB
   nutanix_deploy_retries: 24
   nutanix_deploy_delay: 150
   # nutanix_deploy_pc_container_name:
