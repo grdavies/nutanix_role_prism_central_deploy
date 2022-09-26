@@ -6,7 +6,7 @@
 
   - import_tasks: deploy_pc.yml
 
-  - name: Set 'admin' password
+  - name: Set Prism Central 'admin' password
     ansible.builtin.import_role:
       name: grdavies.nutanix_role_prism_initial_password
     vars:
