@@ -5,18 +5,18 @@
         set_fact:
           nutanix_container_found_uuid: "None"
 
-      - name: Search for container "{{ nutanix_deploy_pc_container_name }}" and get its UUID
+      - name: Search for container "{{ nutanix_pc_deploy_container_name }}" and get its UUID
         ansible.builtin.import_role:
           name: grdavies.nutanix_role_prism_container_search
         vars:
-          nutanix_container_search_name: "{{ nutanix_deploy_pc_container_name }}"
+          nutanix_container_search_name: "{{ nutanix_pc_deploy_container_name }}"
 
       - ansible.builtin.fail:
-          msg: "the container '{{ nutanix_deploy_pc_container_name }}' was not found. Please check the input variable nutanix_deploy_pc_container_name or that the container is present on this Nutanix cluster"
+          msg: "the container '{{ nutanix_pc_deploy_container_name }}' was not found. Please check the input variable nutanix_pc_deploy_container_name or that the container is present on this Nutanix cluster"
         when:
           - nutanix_container_found_uuid is not defined or nutanix_container_found_uuid == "None"
 
-  - name: Find uuid for network "{{ nutanix_deploy_pc_subnet_name }}"
+  - name: Find uuid for network "{{ nutanix_pc_deploy_subnet_name }}"
     block:
       - name: Get subnets from nutanix.ncp collection
         ntnx_subnets_info:
@@ -28,8 +28,8 @@
 
       - name: search subnets list for subnet name and return its uuid
         set_fact:
-          nutanix_deploy_pc_network_uuid: "{{ item.metadata.uuid }}"
-        when: item.status.name == nutanix_deploy_pc_subnet_name
+          nutanix_pc_deploy_network_uuid: "{{ item.metadata.uuid }}"
+        when: item.status.name == nutanix_pc_deploy_subnet_name
         with_items: "{{ nutanix_current_subnets.response.entities }}"
 
   - name: Debug
@@ -38,18 +38,18 @@
         debug:
           var: nutanix_current_subnets.response
 
-      - name: Debug nutanix_deploy_pc_network_uuid
+      - name: Debug nutanix_pc_deploy_network_uuid
         debug:
-          var: nutanix_deploy_pc_network_uuid
+          var: nutanix_pc_deploy_network_uuid
     when:
       - nutanix_debug
 
   - ansible.builtin.fail:
-      msg: "the subnet '{{ nutanix_deploy_pc_subnet_name }}' was not found. Please check the input variable nutanix_deploy_pc_subnet_name or that the subnet is present on this Nutanix cluster"
+      msg: "the subnet '{{ nutanix_pc_deploy_subnet_name }}' was not found. Please check the input variable nutanix_pc_deploy_subnet_name or that the subnet is present on this Nutanix cluster"
     when:
-      - nutanix_deploy_pc_network_uuid is not defined
+      - nutanix_pc_deploy_network_uuid is not defined
 
-  - name: Get latest prism central version available for this AOS version if variable 'nutanix_deploy_pc_version' not provided
+  - name: Get latest prism central version available for this AOS version if variable 'nutanix_pc_deploy_version' not provided
     block:
       - name: Get available PC versions
         uri:
@@ -61,47 +61,47 @@
             Authorization: "{{ nutanix_api_auth }}"
           status_code: 200
           return_content: yes
-        register: nutanix_deploy_pc_versions
+        register: nutanix_pc_deploy_versions
         ignore_errors: no
 
       - name: Get latest PC for this clusters AOS release
         set_fact:
-          nutanix_deploy_pc_rdates: "{{ nutanix_deploy_pc_versions.json | json_query('entities[*].releaseDate') | max }}"
+          nutanix_pc_deploy_rdates: "{{ nutanix_pc_deploy_versions.json | json_query('entities[*].releaseDate') | max }}"
 
       - name: Get latest PC version name for this clusters AOS release
         set_fact:
-          nutanix_deploy_pc_version: "{{ nutanix_deploy_pc_versions.json | json_query(query) | join(\"\") }}"
+          nutanix_pc_deploy_version: "{{ nutanix_pc_deploy_versions.json | json_query(query) | join(\"\") }}"
         vars:
-          query: "entities[?releaseDate==`{{ nutanix_deploy_pc_rdates }}`].version"
+          query: "entities[?releaseDate==`{{ nutanix_pc_deploy_rdates }}`].version"
 
-    when: nutanix_deploy_pc_version is not defined
+    when: nutanix_pc_deploy_version is not defined
 
   - name: Set default nutanix_ha_failover_enabled for "{{ nutanix_desired_ha_state }}"
     set_fact:
-      nutanix_deploy_pc_num_sockets: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('nutanix_deploy_pc_num_sockets') }}"
-      nutanix_deploy_pc_data_disk_size: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('nutanix_deploy_pc_data_disk_size') }}"
-      nutanix_deploy_pc_memory_size: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('nutanix_deploy_pc_memory_size') }}"
+      nutanix_pc_deploy_num_sockets: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('nutanix_pc_deploy_num_sockets') }}"
+      nutanix_pc_deploy_data_disk_size: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('nutanix_pc_deploy_data_disk_size') }}"
+      nutanix_pc_deploy_memory_size: "{{ nutanix_central_size_defaults | json_query(query) | first | json_query('nutanix_pc_deploy_memory_size') }}"
     vars:
-      query: "[?size==`{{ nutanix_deploy_pc_size }}`]"
+      query: "[?size==`{{ nutanix_pc_deploy_size }}`]"
     when:
       - nutanix_ha_failover_enabled is undefined
 
   - name: Debug
     block:
-      - name: Debug nutanix_deploy_pc_version
+      - name: Debug nutanix_pc_deploy_version
         debug:
-          var: nutanix_deploy_pc_version
+          var: nutanix_pc_deploy_version
 
-      - name: Debug nutanix_deploy_pc_num_sockets
+      - name: Debug nutanix_pc_deploy_num_sockets
         debug:
-          var: nutanix_deploy_pc_num_sockets
+          var: nutanix_pc_deploy_num_sockets
 
-      - name: Debug nutanix_deploy_pc_data_disk_size
+      - name: Debug nutanix_pc_deploy_data_disk_size
         debug:
-          var: nutanix_deploy_pc_data_disk_size
+          var: nutanix_pc_deploy_data_disk_size
 
-      - name: Debug nutanix_deploy_pc_memory_size
+      - name: Debug nutanix_pc_deploy_memory_size
         debug:
-          var: nutanix_deploy_pc_memory_size
+          var: nutanix_pc_deploy_memory_size
     when:
       - nutanix_debug
