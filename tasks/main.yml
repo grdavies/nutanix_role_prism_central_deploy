@@ -4,7 +4,7 @@
 
 - name: "Task can only be run against Prism Element"
   ansible.builtin.fail:
-    msg: "{{ nutanix_host }} is not a Nutanix cluster. Please check the nutanix_host variable and try again."
+    msg: "'nutanix_host' needs to be set to the VIP of a Nutanix cluster. Please check the variable and try again."
   when:
     - nutanix_endpoint_prism_type != 'pe'
 
