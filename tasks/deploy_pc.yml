@@ -28,4 +28,4 @@
         nutanix_task_retry_delay: "{{ nutanix_pc_deploy_delay }}"
 
     - set_fact:
-      nutanix_pc_deploy_task: "{{ monitored_task }}"
+        nutanix_pc_deploy_task: "{{ monitored_task }}"
