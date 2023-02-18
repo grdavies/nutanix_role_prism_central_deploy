@@ -4,19 +4,18 @@
   roles:
     - role: ../..
   vars:
-    nutanix_host: 10.38.179.37
+    nutanix_host: "10.38.186.37"
     nutanix_username: admin
-    nutanix_password: nx2Tech283!
+    nutanix_password: nx2Tech106!
     # nutanix_debug: True
-    nutanix_pc_deploy_container_name: default-container-165964
+    nutanix_pc_deploy_container_name: Default
     nutanix_pc_deploy_subnet_name: Primary
     nutanix_pc_deploy_network_address: 10.38.179.0/25
-    nutanix_pc_deploy_gateway: 10.38.179.1
-    nutanix_pc_deploy_ip_address: 10.38.179.39
+    nutanix_pc_deploy_gateway: 10.38.186.1
+    nutanix_pc_deploy_ip_address: 10.38.186.39
     nutanix_pc_deploy_dns_list:
-      - 8.8.8.8
-      - 8.8.4.4
-    nutanix_pc_deploy_new_password: nx2Tech283!
+      - 10.42.194.10
+    nutanix_pc_deploy_new_password: nx2Tech106!
     nutanix_pc_deploy_eula_accept: True
     nutanix_pc_deploy_eula_full_name: Ross Davies
     nutanix_pc_deploy_eula_company_name: Nutanix
