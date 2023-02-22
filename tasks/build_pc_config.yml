@@ -20,7 +20,7 @@
 - name: Find uuid for network "{{ nutanix_pc_deploy_subnet_name }}"
   block:
     - name: Get subnets from nutanix.ncp collection
-      ntnx_subnets_info:
+      nutanix.ncp.ntnx_subnets_info:
         nutanix_host: "{{ nutanix_host }}"
         nutanix_username: "{{ nutanix_username }}"
         nutanix_password: "{{ nutanix_password }}"
