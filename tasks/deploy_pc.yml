@@ -3,7 +3,7 @@
   block:
     - name: Deploying Prism Central to Cluster
       uri:
-        url: "https://{{nutanix_host}}:{{nutanix_port}}/api/nutanix/v3/prism_central"
+        url: "https://{{ nutanix_host }}:{{ nutanix_port }}/api/nutanix/v3/prism_central"
         method: POST
         validate_certs: "{{ validate_certs }}"
         body_format: json
@@ -23,5 +23,6 @@
         nutanix_task_retries: "{{ nutanix_pc_deploy_retries }}"
         nutanix_task_retry_delay: "{{ nutanix_pc_deploy_delay }}"
 
-    - set_fact:
+    - name: Set nutanix_pc_deploy_task
+      set_fact:
         nutanix_pc_deploy_task: "{{ monitored_task }}"

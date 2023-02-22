@@ -11,7 +11,8 @@
       vars:
         nutanix_container_search_name: "{{ nutanix_pc_deploy_container_name }}"
 
-    - ansible.builtin.fail:
+    - name: Container not found
+      ansible.builtin.fail:
         msg: "the container '{{ nutanix_pc_deploy_container_name }}' was not found. Please check the input variable nutanix_pc_deploy_container_name or that the container is present on this Nutanix cluster"
       when:
         - nutanix_container_found_uuid is not defined or nutanix_container_found_uuid == "None"
@@ -53,7 +54,7 @@
   block:
     - name: Get available PC versions
       uri:
-        url: "https://{{nutanix_host}}:{{nutanix_port}}/PrismGateway/services/rest/v1/upgrade/prism_central_deploy/softwares"
+        url: "https://{{ nutanix_host }}:{{ nutanix_port }}/PrismGateway/services/rest/v1/upgrade/prism_central_deploy/softwares"
         method: GET
         validate_certs: "{{ validate_certs }}"
         body_format: json
